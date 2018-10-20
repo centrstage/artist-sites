@@ -1,0 +1,24 @@
+query siteById ($id: ID!) {
+  site (
+    where: {
+    id: $id
+    }) {
+    artist {
+      name
+      description
+      website
+      facebook
+      twitter
+      snapchat
+      instagram
+      streams {
+        title
+        venue
+        venueUrl
+        embed
+        time
+        description
+      }
+    }
+  }
+}
