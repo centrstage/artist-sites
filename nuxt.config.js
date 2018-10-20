@@ -1,4 +1,13 @@
 const pkg = require('./package')
+const path = require('path')
+const PurgecssPlugin = require('purgecss-webpack-plugin')
+const glob = require('glob-all')
+
+class TailwindExtractor {
+  static extract(content) {
+    return content.match(/[A-z0-9-:/]+/g) || []
+  }
+}
 
 module.exports = {
   mode: 'universal',
@@ -20,11 +29,6 @@ module.exports = {
   ** Customize the progress-bar color
   */
   loading: { color: '#fff' },
-
-  /*
-  ** Global CSS
-  */
-  css: ['~/assets/css/tailwind.css'],
 
   /*
   ** Plugins to load before mounting the App
@@ -60,12 +64,10 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    /*
-    ** You can extend webpack config here
-    */
-    extend(config, ctx) {
-      // Run ESLint on save
-      if (ctx.isDev && ctx.isClient) {
+    extractCSS: true,
+    postcss: [require('tailwindcss')('./tailwind.js'), require('autoprefixer')],
+    extend(config, { isDev, isClient }) {
+      if (isDev && isClient) {
         config.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
@@ -73,6 +75,23 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
+      config.plugins.push(
+        new PurgecssPlugin({
+          paths: glob.sync([
+            path.join(__dirname, './pages/**/*.vue'),
+            path.join(__dirname, './layouts/**/*.vue'),
+            path.join(__dirname, './components/**/*.vue')
+          ]),
+          extractors: [
+            {
+              extractor: TailwindExtractor,
+              extensions: ['vue']
+            }
+          ],
+          whitelist: ['html', 'body', 'nuxt-progress']
+        })
+      )
     }
-  }
+  },
+  css: ['~/assets/sass/style.scss']
 }
