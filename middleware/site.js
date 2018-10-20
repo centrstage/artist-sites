@@ -1,8 +1,6 @@
 import siteById from '~/apollo/queries/siteById'
 
 export default async function({ isServer, req, app, store }) {
-  if (isServer || !req) return
-
   await app.apolloProvider.clients.defaultClient
     .query({
       query: siteById,
