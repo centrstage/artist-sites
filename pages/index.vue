@@ -7,8 +7,8 @@
       />
     </section>
     <section id="streams">
-      <Card v-for="stream in streams" :key="stream.id">
-        <Livestream-Embed :url="stream.embed" autoplay/>
+      <Card v-for="(stream, index) in streams" :key="index" :class="[index !== streams.length - 1 ? 'mb-4' : '']">
+        <Livestream-Embed :url="stream.embed" :autoplay="index === 0 ? true : false"/>
         <main class="p-4">
           <Heading class="font-brand">{{ stream.title }}</Heading>
           <Paragraph>
