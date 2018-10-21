@@ -11,7 +11,7 @@ query siteById ($id: ID!) {
       twitter
       snapchat
       instagram
-      streams {
+      streams(orderBy: time_DESC) {
         title
         venue
         venueUrl
